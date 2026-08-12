@@ -2,11 +2,13 @@ import 'dart:math';
 
 class ItemOrcamento {
   String descricao;
+  String unidade;
   double quantidade;
   double valorUnitario;
 
   ItemOrcamento({
     required this.descricao,
+    this.unidade = 'UND',
     this.quantidade = 1,
     required this.valorUnitario,
   });
@@ -15,12 +17,14 @@ class ItemOrcamento {
 
   Map<String, dynamic> toJson() => {
         'descricao': descricao,
+        'unidade': unidade,
         'quantidade': quantidade,
         'valorUnitario': valorUnitario,
       };
 
   factory ItemOrcamento.fromJson(Map<String, dynamic> json) => ItemOrcamento(
         descricao: json['descricao'] as String,
+        unidade: json['unidade'] as String? ?? 'UND',
         quantidade: (json['quantidade'] as num).toDouble(),
         valorUnitario: (json['valorUnitario'] as num).toDouble(),
       );
@@ -31,6 +35,7 @@ class Orcamento {
   int numero;
   String cliente;
   String telefone;
+  String titulo;
   String observacoes;
   DateTime data;
   List<ItemOrcamento> itens;
@@ -45,6 +50,7 @@ class Orcamento {
     required this.numero,
     this.cliente = '',
     this.telefone = '',
+    this.titulo = '',
     this.observacoes = '',
     required this.data,
     List<ItemOrcamento>? itens,
@@ -67,6 +73,7 @@ class Orcamento {
         'numero': numero,
         'cliente': cliente,
         'telefone': telefone,
+        'titulo': titulo,
         'observacoes': observacoes,
         'data': data.toIso8601String(),
         'itens': itens.map((i) => i.toJson()).toList(),
@@ -79,6 +86,7 @@ class Orcamento {
         numero: json['numero'] as int,
         cliente: json['cliente'] as String? ?? '',
         telefone: json['telefone'] as String? ?? '',
+        titulo: json['titulo'] as String? ?? '',
         observacoes: json['observacoes'] as String? ?? '',
         data: DateTime.parse(json['data'] as String),
         itens: (json['itens'] as List)
@@ -96,6 +104,9 @@ class DadosEmpresa {
   String endereco;
   String cnpj;
   String instagram;
+  String responsavel;
+  String cidade;
+  String lema;
 
   DadosEmpresa({
     this.nome = '',
@@ -104,6 +115,9 @@ class DadosEmpresa {
     this.endereco = '',
     this.cnpj = '',
     this.instagram = '',
+    this.responsavel = '',
+    this.cidade = '',
+    this.lema = '',
   });
 
   factory DadosEmpresa.padrao() => DadosEmpresa(
@@ -113,6 +127,7 @@ class DadosEmpresa {
             'CEP 69.309-195 - Boa Vista - RR',
         cnpj: '57.256.951/0001-43',
         instagram: '@iserv_seguranca',
+        cidade: 'Boa Vista',
       );
 
   Map<String, dynamic> toJson() => {
@@ -122,6 +137,9 @@ class DadosEmpresa {
         'endereco': endereco,
         'cnpj': cnpj,
         'instagram': instagram,
+        'responsavel': responsavel,
+        'cidade': cidade,
+        'lema': lema,
       };
 
   factory DadosEmpresa.fromJson(Map<String, dynamic> json) => DadosEmpresa(
@@ -131,5 +149,8 @@ class DadosEmpresa {
         endereco: json['endereco'] as String? ?? '',
         cnpj: json['cnpj'] as String? ?? '',
         instagram: json['instagram'] as String? ?? '',
+        responsavel: json['responsavel'] as String? ?? '',
+        cidade: json['cidade'] as String? ?? 'Boa Vista',
+        lema: json['lema'] as String? ?? '',
       );
 }

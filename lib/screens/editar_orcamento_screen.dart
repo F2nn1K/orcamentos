@@ -22,6 +22,7 @@ class _EditarOrcamentoScreenState extends State<EditarOrcamentoScreen> {
 
   late final TextEditingController _clienteCtrl;
   late final TextEditingController _telefoneCtrl;
+  late final TextEditingController _tituloCtrl;
   late final TextEditingController _observacoesCtrl;
   late final TextEditingController _descontoCtrl;
 
@@ -37,6 +38,7 @@ class _EditarOrcamentoScreenState extends State<EditarOrcamentoScreen> {
     final o = widget.orcamento;
     _clienteCtrl = TextEditingController(text: o?.cliente ?? '');
     _telefoneCtrl = TextEditingController(text: o?.telefone ?? '');
+    _tituloCtrl = TextEditingController(text: o?.titulo ?? '');
     _observacoesCtrl = TextEditingController(text: o?.observacoes ?? '');
     _itens = o?.itens.map((i) => ItemOrcamento.fromJson(i.toJson())).toList() ?? [];
     _descontoPercentual = o?.descontoPercentual ?? true;
@@ -54,6 +56,7 @@ class _EditarOrcamentoScreenState extends State<EditarOrcamentoScreen> {
   void dispose() {
     _clienteCtrl.dispose();
     _telefoneCtrl.dispose();
+    _tituloCtrl.dispose();
     _observacoesCtrl.dispose();
     _descontoCtrl.dispose();
     super.dispose();
@@ -76,6 +79,7 @@ class _EditarOrcamentoScreenState extends State<EditarOrcamentoScreen> {
 
   Future<void> _adicionarOuEditarItem({ItemOrcamento? item, int? index}) async {
     final descricaoCtrl = TextEditingController(text: item?.descricao ?? '');
+    final unidadeCtrl = TextEditingController(text: item?.unidade ?? 'UND');
     final quantidadeCtrl = TextEditingController(
       text: item == null ? '1' : PdfService.formatarQuantidade(item.quantidade),
     );
@@ -106,6 +110,18 @@ class _EditarOrcamentoScreenState extends State<EditarOrcamentoScreen> {
               children: [
                 Expanded(
                   child: TextField(
+                    controller: unidadeCtrl,
+                    textCapitalization: TextCapitalization.characters,
+                    decoration: const InputDecoration(
+                      labelText: 'Und.',
+                      hintText: 'UND / SVÇ',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: TextField(
                     controller: quantidadeCtrl,
                     keyboardType:
                         const TextInputType.numberWithOptions(decimal: true),
@@ -116,21 +132,18 @@ class _EditarOrcamentoScreenState extends State<EditarOrcamentoScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  flex: 2,
-                  child: TextField(
-                    controller: valorCtrl,
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [MoedaInputFormatter()],
-                    decoration: const InputDecoration(
-                      labelText: 'Valor unitário',
-                      prefixText: 'R\$ ',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                ),
               ],
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: valorCtrl,
+              keyboardType: TextInputType.number,
+              inputFormatters: [MoedaInputFormatter()],
+              decoration: const InputDecoration(
+                labelText: 'Valor unitário',
+                prefixText: 'R\$ ',
+                border: OutlineInputBorder(),
+              ),
             ),
           ],
         ),
@@ -153,6 +166,9 @@ class _EditarOrcamentoScreenState extends State<EditarOrcamentoScreen> {
 
     final novoItem = ItemOrcamento(
       descricao: descricao,
+      unidade: unidadeCtrl.text.trim().isEmpty
+          ? 'UND'
+          : unidadeCtrl.text.trim().toUpperCase(),
       quantidade: _parseNumero(quantidadeCtrl.text) == 0
           ? 1
           : _parseNumero(quantidadeCtrl.text),
@@ -200,6 +216,7 @@ class _EditarOrcamentoScreenState extends State<EditarOrcamentoScreen> {
     orcamento
       ..cliente = cliente
       ..telefone = _telefoneCtrl.text.trim()
+      ..titulo = _tituloCtrl.text.trim()
       ..observacoes = _observacoesCtrl.text.trim()
       ..itens = _itens
       ..descontoPercentual = _descontoPercentual
@@ -266,6 +283,17 @@ class _EditarOrcamentoScreenState extends State<EditarOrcamentoScreen> {
               border: OutlineInputBorder(),
             ),
           ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _tituloCtrl,
+            textCapitalization: TextCapitalization.sentences,
+            decoration: const InputDecoration(
+              labelText: 'Assunto do orçamento (opcional)',
+              hintText: 'Ex.: Manutenção de CFTV IP',
+              prefixIcon: Icon(Icons.subject),
+              border: OutlineInputBorder(),
+            ),
+          ),
           const SizedBox(height: 24),
 
           // Itens
@@ -304,7 +332,7 @@ class _EditarOrcamentoScreenState extends State<EditarOrcamentoScreen> {
               child: ListTile(
                 title: Text(item.descricao),
                 subtitle: Text(
-                  '${PdfService.formatarQuantidade(item.quantidade)} x ${_moeda.format(item.valorUnitario)}',
+                  '${PdfService.formatarQuantidade(item.quantidade)} ${item.unidade.toLowerCase()} x ${_moeda.format(item.valorUnitario)}',
                 ),
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,

@@ -20,6 +20,9 @@ class _DadosEmpresaScreenState extends State<DadosEmpresaScreen> {
   final _enderecoCtrl = TextEditingController();
   final _cnpjCtrl = TextEditingController();
   final _instagramCtrl = TextEditingController();
+  final _responsavelCtrl = TextEditingController();
+  final _cidadeCtrl = TextEditingController();
+  final _lemaCtrl = TextEditingController();
 
   bool _carregando = true;
 
@@ -39,6 +42,9 @@ class _DadosEmpresaScreenState extends State<DadosEmpresaScreen> {
       _enderecoCtrl.text = empresa.endereco;
       _cnpjCtrl.text = empresa.cnpj;
       _instagramCtrl.text = empresa.instagram;
+      _responsavelCtrl.text = empresa.responsavel;
+      _cidadeCtrl.text = empresa.cidade;
+      _lemaCtrl.text = empresa.lema;
       _carregando = false;
     });
   }
@@ -51,6 +57,9 @@ class _DadosEmpresaScreenState extends State<DadosEmpresaScreen> {
       endereco: _enderecoCtrl.text.trim(),
       cnpj: _cnpjCtrl.text.trim(),
       instagram: _instagramCtrl.text.trim(),
+      responsavel: _responsavelCtrl.text.trim(),
+      cidade: _cidadeCtrl.text.trim(),
+      lema: _lemaCtrl.text.trim(),
     ));
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
@@ -67,6 +76,9 @@ class _DadosEmpresaScreenState extends State<DadosEmpresaScreen> {
     _enderecoCtrl.dispose();
     _cnpjCtrl.dispose();
     _instagramCtrl.dispose();
+    _responsavelCtrl.dispose();
+    _cidadeCtrl.dispose();
+    _lemaCtrl.dispose();
     super.dispose();
   }
 
@@ -140,6 +152,37 @@ class _DadosEmpresaScreenState extends State<DadosEmpresaScreen> {
                   decoration: const InputDecoration(
                     labelText: 'Instagram (opcional)',
                     prefixIcon: Icon(Icons.alternate_email),
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: _responsavelCtrl,
+                  textCapitalization: TextCapitalization.words,
+                  decoration: const InputDecoration(
+                    labelText: 'Nome do responsável (assina o orçamento)',
+                    prefixIcon: Icon(Icons.person_outline),
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: _cidadeCtrl,
+                  textCapitalization: TextCapitalization.words,
+                  decoration: const InputDecoration(
+                    labelText: 'Cidade (aparece na data do PDF)',
+                    prefixIcon: Icon(Icons.location_city_outlined),
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: _lemaCtrl,
+                  textCapitalization: TextCapitalization.characters,
+                  decoration: const InputDecoration(
+                    labelText: 'Frase do topo do PDF (opcional)',
+                    hintText: 'Ex.: DEUS É FIEL',
+                    prefixIcon: Icon(Icons.format_quote_outlined),
                     border: OutlineInputBorder(),
                   ),
                 ),
